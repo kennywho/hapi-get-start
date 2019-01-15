@@ -5,6 +5,11 @@ const server = Hapi.server({
     host: 'localhost'
 })
 
+const client = Hapi.server({
+    port: 3002,
+    host: 'localhost'
+})
+
 let speech = {
     value: 'welcome',
     set (val) {
@@ -12,7 +17,7 @@ let speech = {
     }
 }
 const init = async () => {
-    server.route({
+    client.route({
         path: '/',
         method: 'GET',
         handler () {
@@ -36,7 +41,6 @@ const init = async () => {
         path: '/api/speech',
         method: 'POST',
         handler (request) {
-            console.log(request)
             speech.set(request.payload.word)
             return {
                 code: 200,
@@ -48,6 +52,7 @@ const init = async () => {
         }
     })
     await server.start()
+    await client.start()
     console.log(`Server running at: ${server.info.uri}`)
 }
 init()
