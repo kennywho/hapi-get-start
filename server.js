@@ -5,6 +5,12 @@ const server = Hapi.server({
     host: 'localhost'
 })
 
+let speech = {
+    value: 'welcome',
+    set (val) {
+        this.value = val
+    }
+}
 const init = async () => {
     server.route({
         path: '/',
@@ -14,14 +20,29 @@ const init = async () => {
         }
     })
     server.route({
-        path: '/api/welcome',
+        path: '/api/welcome/{name}',
         method: 'GET',
         handler (request) {
             return {
                 code: 200,
                 success: true,
                 data: {
-                    msg: `welcome ${request.query.name}`
+                    msg: `${speech.value} ${request.params.name}`
+                }
+            }
+        }
+    })
+    server.route({
+        path: '/api/speech',
+        method: 'POST',
+        handler (request) {
+            console.log(request)
+            speech.set(request.payload.word)
+            return {
+                code: 200,
+                success: true,
+                data: {
+                    msg: `speech is *${speech.value}* now`
                 }
             }
         }
