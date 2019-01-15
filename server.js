@@ -6,6 +6,13 @@ const server = Hapi.server({
 })
 
 const init = async () => {
+    server.route({
+        path: '/',
+        method: 'GET',
+        handler () {
+            return 'Hapi world'
+        }
+    })
     await server.start()
     console.log(`Server running at: ${server.info.uri}`)
 }
