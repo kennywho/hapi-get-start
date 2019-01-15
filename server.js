@@ -16,12 +16,12 @@ const init = async () => {
     server.route({
         path: '/api/welcome',
         method: 'GET',
-        handler () {
+        handler (request) {
             return {
                 code: 200,
                 success: true,
                 data: {
-                    msg: 'welcome'
+                    msg: `welcome ${request.query.name}`
                 }
             }
         }
