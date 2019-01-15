@@ -1,4 +1,6 @@
 const Hapi = require('hapi')
+const Path = require('path')
+const Inert = require('inert')
 
 const server = Hapi.server({
     port: 3000,
@@ -7,7 +9,12 @@ const server = Hapi.server({
 
 const client = Hapi.server({
     port: 3002,
-    host: 'localhost'
+    host: 'localhost',
+    routes: {
+        files: {
+            relativeTo: Path.join(__dirname, 'public')
+        }
+    }
 })
 
 let speech = {
@@ -17,11 +24,16 @@ let speech = {
     }
 }
 const init = async () => {
+    await client.register(Inert)
     client.route({
-        path: '/',
+        path: '/{param*}',
         method: 'GET',
-        handler () {
-            return 'Hapi world'
+        handler: {
+            directory: {
+                path: '.',
+                index: true,
+                defaultExtension: 'html'
+            }
         }
     })
     server.route({
@@ -51,6 +63,7 @@ const init = async () => {
             }
         }
     })
+
     await server.start()
     await client.start()
     console.log(`Server running at: ${server.info.uri}`)
