@@ -9,5 +9,12 @@
 </head>
 <body>
     <h1>Hapi world</h1>
+    <script>
+        $.ajax({
+            url: 'http://localhost:3000/api/welcome/kenny'
+        }).then(function (data) {
+            console.log(data)
+        })
+    </script>
 </body>
 </html>
