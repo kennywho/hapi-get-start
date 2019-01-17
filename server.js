@@ -28,6 +28,14 @@ let speech = {
         this.value = val
     }
 }
+server.state('login', {
+    ttl: null, // 时效
+    isSecure: false, // https
+    isHttpOnly: false, // http Only
+    encoding: 'none', // encode
+    clearInvalid: false, // 移除不可用的 cookie
+    strictHeader: true // 不允许违反 RFC 6265
+})
 const init = async () => {
     await client.register(Inert)
     client.route({
@@ -51,6 +59,48 @@ const init = async () => {
                 data: {
                     msg: `${speech.value} ${request.params.name}`
                 }
+            }
+        }
+    })
+    server.route({
+        path: '/api/login',
+        method: 'POST',
+        handler (request, h) {
+            let body
+            let code
+            const isLogin = request.state.login
+            if (isLogin) {
+                body = {
+                    msg: '已登录'
+                }
+                code = 200
+            } else if (request.payload && request.payload.email === 'kenny@gmail.com' && request.payload.password === '123456') {
+                h.state('login', 'true')
+                body = {
+                    msg: '登录成功'
+                }
+                code = 200
+            } else {
+                code = 100
+                body = {
+                    msg: '登录信息有误'
+                }
+            }
+            return {
+                code,
+                success: true,
+                data: body
+            }
+        }
+    })
+    server.route({
+        path: '/api/logout',
+        method: 'POST',
+        handler (request, h) {
+            h.unstate('login')
+            return {
+                code: 200,
+                success: true
             }
         }
     })
