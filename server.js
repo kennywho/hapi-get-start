@@ -38,6 +38,12 @@ server.state('login', {
 })
 const init = async () => {
     await client.register(Inert)
+    await server.register({
+        plugin: require('hapi-pino'),
+        options: {
+            prettyPrint: true // 格式化输出
+        }
+    })
     client.route({
         path: '/{param*}',
         method: 'GET',
